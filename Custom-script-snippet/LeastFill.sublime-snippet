@@ -1,0 +1,14 @@
+<snippet>
+	<content><![CDATA[
+  <exec>
+for eachrow in QuestionLabel.rows:
+    if hasMarker('/SheetName/QuestionName%s' %eachrow.label):
+        QuestionLabel[eachrow].val = 1
+  </exec>
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>leastfill</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>text.xml</scope>
+</snippet>

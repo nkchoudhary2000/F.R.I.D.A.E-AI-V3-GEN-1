@@ -1,0 +1,11 @@
+<snippet>
+	<content><![CDATA[
+
+<div align="center"><img src="[rel $1]" class="survey_image survey-image-[pipe: imgSize]" /></div>
+]]>
+	</content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>img</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>text.xml</scope>
+</snippet>

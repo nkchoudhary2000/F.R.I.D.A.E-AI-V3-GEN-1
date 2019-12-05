@@ -1,0 +1,19 @@
+<snippet>
+	<content><![CDATA[
+<pipe label="popup_width" capture="">
+  <case label="r1" cond="device.smartphone">width : &amp;quot;380&amp;quot;, height : &amp;quot;500&amp;quot;</case>
+  <case label="r2" cond="1">width : &amp;quot;800&amp;quot;, height : &amp;quot;400&amp;quot;</case>
+</pipe>
+<div style="text-align:center;">
+	<a href="#" onclick="Survey.uidialog.make(\$(&amp;quot;.img1&amp;quot;), {[pipe: popup_width]});">[ANCHOR LINK TEXT]</a>
+</div>
+<div style="border: 1px solid black;" class="hidden img1">
+	[TEXT GOES HERE]
+</div>
+]]>
+	</content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>popup</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>text.xml</scope>
+</snippet>
