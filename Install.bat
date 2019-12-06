@@ -1,0 +1,1 @@
+xcopy ".\*" "C:\Users\%USERNAME%\AppData\Roaming\Sublime Text 3\Packages\FRIDAE-AI-V3-GEN-1\" /a /s /e /y /h

@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[
+<i>${0:$SELECTION}</i>
+]]></content>
+	<scope>text.xml</scope>
+</snippet>
