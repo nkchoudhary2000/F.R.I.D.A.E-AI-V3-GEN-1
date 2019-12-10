@@ -407,9 +407,9 @@ def AppendSplit(input):
         for eachLine in input:
             eachLine = eachLine.strip()
             eachLine = re.sub(r'(<[BbIiUu]>)([\s\n]{1,})?(\[)(.*)(\]|\))([\s\n]{1,})?(</[BbIiUu]>)', r'\3\4\5', eachLine)
-            found = re.search("^(\[|\()?([Q][_]?)?(([\d]+[a-zA-Z_]+)+|([a-zA-Z_]+)|([a-zA-Z_]+[\d]+)+|([a-zA-Z_]+)([\d]+[a-zA-Z_]+)+)(\.|\)|\])", eachLine)
+            found = re.search("^(\[|\()?(([\d]+[a-zA-Z_]+)+|([a-zA-Z_]+)|([a-zA-Z_]+[\d]+)+|([a-zA-Z_]+)([\d]+[a-zA-Z_]+)+)(\.|\)|\])", eachLine)
             if found:
-                eachLine = re.sub(r'^(\[|\()?([Q][_]?)?(([\d]+[a-zA-Z_]+)+|([a-zA-Z_]+)|([a-zA-Z_]+[\d]+)+|([a-zA-Z_]+)([\d]+[a-zA-Z_]+)+)(\.|\)|\])', r'\3.', eachLine)
+                eachLine = re.sub(r'^(\[|\()?(([\d]+[a-zA-Z_]+)+|([a-zA-Z_]+)|([a-zA-Z_]+[\d]+)+|([a-zA-Z_]+)([\d]+[a-zA-Z_]+)+)(\.|\)|\])', r'\2.', eachLine)
                 eachLine = "<split>\n" + eachLine
             tempText += eachLine + "\n"
     except Exception as e:
