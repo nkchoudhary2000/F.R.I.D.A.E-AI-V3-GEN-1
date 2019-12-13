@@ -534,6 +534,7 @@ def ReturnPipeInLabel(qTitle,GLOBAL_LABEL):
     if ("pipe" in qTitle.lower()):
         for eachLabel in GLOBAL_LABEL:
             if (eachLabel in qTitle) and (eachLabel != ""):
+
                 copyAttribute = " onLoad=\"copy('"+ eachLabel +"', rows=True, exclude='')\""
                 return copyAttribute
     return ""
@@ -568,6 +569,9 @@ class madeAllQuestionCommand(sublime_plugin.TextCommand):
                     content = singleQuestion[0]
                     questionLabel = singleQuestion[1]
                     questionTitle = singleQuestion[2]
+
+                    if questionTitle == "" and content == "":
+                        continue
 
 
 
