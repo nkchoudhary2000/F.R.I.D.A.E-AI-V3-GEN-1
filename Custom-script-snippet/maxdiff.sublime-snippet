@@ -1,5 +1,5 @@
 <snippet>
-	<content>[str]QLabel-[int]QRange-[int]QLoopCount-[int]QAttrib</content>
+	<content>[str]QLabel-[int]QRange-[int]QLoopCount-[int]QAttrib-[str]MaxDiffTemplate[alt|ind]</content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
 	<tabTrigger>md</tabTrigger>
 	<!-- Optional: Set a scope to limit where the snippet will trigger -->
