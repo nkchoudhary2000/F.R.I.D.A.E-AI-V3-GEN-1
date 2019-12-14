@@ -28,9 +28,9 @@ def make_attrib(self, edit):
   return printPage
 
   #printPage = ''
-	# for count in range(1, attribCount+1):
-	# 	printPage += "<row label=\"item%s\">Item %s</row>\n" % (count, count)
-	# return printPage
+  # for count in range(1, attribCount+1):
+  #   printPage += "<row label=\"item%s\">Item %s</row>\n" % (count, count)
+  # return printPage
 
 def make_res_tag(attribCount):
   printPage = ''
@@ -44,7 +44,12 @@ def make_loopvar(loopCount):
     printPage += "<looprow label=\"%s\"><loopvar name=\"task\">%s</loopvar></looprow>\n" % (count, count)
   return printPage
 
-def make_maxdiff(qLabel, insertRes, insertLoop, insertAttrib, qRange):
+
+##################################
+##  ALTERNATIVES TEMPLATE       ##
+##################################
+
+def make_maxdiff_alt(qLabel, insertRes, insertLoop, insertAttrib, qRange):
   qQuestion = """
 <note>MaxDiff Alternatives Template --Start--</note>
 <exec when="init">
@@ -182,11 +187,158 @@ p.MDcount = str("""+qLabel+"""_md_loop_expanded.order.index([loopvar: task]-1)+1
   """
   return qQuestion
 
-def make_question(self, edit, qLabel, qRange, qAttribCount, qLoopCount):
+
+##################################
+##  INDICES TEMPLATE            ##
+##################################
+
+def make_maxdiff_ind(qLabel, insertRes, insertLoop, insertAttrib, qRange):
+  qQuestion = """
+ <note>MaxDiff Indices Template --Start--</note>
+    <exec when="init">
+def setupMaxDiffFile(fname, fileDelimiter="\t"):
+    try:
+        f = open("%s/%s" % (gv.survey.path, fname))
+        mdObj = [ line.strip("\\r\\n").split(fileDelimiter) for line in f.readlines() ]
+        d = dict( ("v%s_t%s" % (row[0], row[1]), row[2:]) for row in mdObj )
+    except IOError:
+        d = {}
+    return d
+
+def setupMaxDiffItemsI(d, vt, question):
+    item_index = dict( (r.o.label.strip("item"), r.index) for r in question.rows )
+
+    items = d[vt]
+
+    for r in question.rows:
+        if r.o.label.strip("item") not in items:
+            r.disabled = True
+
+    question.rows.order = [ item_index[i] for i in items ]
+
+    print "*****STAFF ONLY*****"
+    print "Version_Task: %s" % vt
+    for i in range(len(items)):
+        print "Item %s: %s" % (i+1,items[i])
+    </exec>
+    
+    <exec when="init">"""+qLabel+"""_md = setupMaxDiffFile("md_design.dat")</exec>
+    
+    <quota label=\""""+qLabel+"""_quota" overquota="noqual" sheet=\""""+qLabel+"""_Maxdiff"/>
+    
+    <number label=\""""+qLabel+"""_Version" size="3" optional="1" verify="range(1,"""+str(qRange)+""")" where="execute">
+      <title>"""+qLabel+""" - MaxDiff Version</title>
+      <exec>
+print p.markers
+for x in p.markers:
+    if \"/"""+qLabel+"""_Maxdiff/ver_" in x:
+        """+qLabel+"""_Version.val = int(x.split("_")[-1])
+        break
+      </exec>
+    </number>
+    <suspend/>
+    
+    <exec>p.startTime = timeSpent()</exec>
+    
+    <loop label=\""""+qLabel+"""_md_loop" vars="task" randomizeChildren="0">
+      <title>"""+qLabel+""" - MaxDiff Loop</title>
+      <block label=\""""+qLabel+"""_md_block" randomize="1">
+        <radio label=\""""+qLabel+"""_[loopvar: task]" adim="cols" grouping="cols" shuffle="rows" unique="1" ss:questionClassNames=\""""+qLabel+"""_maxdiff">
+          <title>Title update [MDcount]</title>
+          <comment>Select one</comment>
+          <exec>
+setupMaxDiffItemsI( """+qLabel+"""_md, "v%d_t%d" % ("""+qLabel+"""_Version.val, [loopvar: task]), """+qLabel+"""_[loopvar: task])
+p.MDcount = str("""+qLabel+"""_md_loop_expanded.order.index([loopvar: task]-1)+1)
+          </exec>
+          <col label="best">Most Important</col>
+          <col label="worst">Least Important</col>
+"""+insertAttrib+"""       
+<style name="question.header" mode="before">
+            <![CDATA[
+    <style type="text/css">
+    ."""+qLabel+"""_maxdiff tr.maxdiff-header-legend {
+        background-color: transparent;
+        border-bottom: 2px solid #d9d9d9;
+    }
+    ."""+qLabel+"""_maxdiff tr.maxdiff-header-legend th.legend {
+        background-color: transparent;
+        border: none;
+    }
+    ."""+qLabel+"""_maxdiff tr.maxdiff-row td.element {
+        border-left: none;
+        border-right: none;
+        border-top: none;
+        border-bottom: 1px solid #d9d9d9;
+        text-align: center;
+    }
+    ."""+qLabel+"""_maxdiff tr.maxdiff-row th.row-legend {
+        background-color: transparent;
+        border-left: none;
+        border-right: none;
+        border-top: none;
+        border-bottom: 1px solid #d9d9d9;
+        text-align: center;
+    }
+    </style>
+            ]]>
+</style>
+ 
+<style name="question.top-legend">
+            <![CDATA[
+\@if ec.simpleList
+    $(legends)
+\@else
+    <$(tag) class="maxdiff-header-legend row row-col-legends row-col-legends-top ${"mobile-top-row-legend " if mobileOnly else ""}${"GtTenColumns " if ec.colCount > 10 else ""}colCount-$(colCount)">
+        ${"%s%s" % (legends.split("</th>")[0],"</th>")}
+       $(left)
+        ${"%s%s" % (legends.split("</th>")[1],"</th>")}
+    </$(tag)>
+    \@if not simple
+  </tbody>
+  <tbody>
+    \@endif
+\@endif
+            ]]>
+</style>
+ 
+<style name="question.row">
+            <![CDATA[
+\@if ec.simpleList
+    $(elements)
+\@else
+    <$(tag) class="maxdiff-row row row-elements $(style) colCount-$(colCount)">
+        ${"%s%s" % (elements.split("</td>")[0],"</td>")}
+        $(left)
+        ${"%s%s" % (elements.split("</td>")[1],"</td>")}
+    </$(tag)>
+\@endif
+            ]]>
+</style>
+        </radio>
+      </block>
+      
+      """+insertLoop+"""
+    
+    </loop>
+    
+    <float label=\""""+qLabel+"""_Timer" size="15" where="execute">
+      <title>"""+qLabel+""" - MaxDiff Timer (Minutes)</title>
+      <exec>"""+qLabel+"""_Timer.val = (timeSpent() - p.startTime) / 60.0</exec>
+    </float>
+    
+    <note>MaxDiff Indices Template --End--</note>
+"""
+  return qQuestion    
+
+
+def make_question(self, edit, qLabel, qRange, qAttribCount, qLoopCount, maxDiffType):
   insertRes = make_res_tag(qAttribCount)
   insertLoop = make_loopvar(qLoopCount)
   insertAttrib = make_attrib(self, edit)
-  qQuestion = make_maxdiff(qLabel, insertRes, insertLoop,insertAttrib, qRange)
+  if maxDiffType == "alt":
+    qQuestion = make_maxdiff_alt(qLabel, insertRes, insertLoop,insertAttrib, qRange)
+  else:
+    qQuestion = make_maxdiff_ind(qLabel, insertRes, insertLoop,insertAttrib, qRange)
   sels = self.view.sel()
   for sel in sels:
     self.view.replace(edit,sel, qQuestion)
@@ -197,15 +349,17 @@ def make_question(self, edit, qLabel, qRange, qAttribCount, qLoopCount):
 
 class MaxDiffCommand(sublime_plugin.TextCommand):
   def run(self, edit):
-  	for sel in self.view.sel():
-  		qListLine = self.view.split_by_newlines(sel)
-  		qListString = [self.view.substr(x).strip() for x in qListLine]
+    for sel in self.view.sel():
+      qListLine = self.view.split_by_newlines(sel)
+      qListString = [self.view.substr(x).strip() for x in qListLine]
 
-  	print (qListLine[0])
-  	print (qListString[0])
-  	qListAttrib = qListString[0].split('-')
-  	qLabel = str(qListAttrib[0])
-  	qRange = int(qListAttrib[1])
-  	qLoopCount = int(qListAttrib[2])
-  	qAttribCount = int(qListAttrib[3])
-  	make_question(self, edit, qLabel, qRange, qAttribCount, qLoopCount)
+    print (qListLine[0])
+    print (qListString[0])
+    qListAttrib = qListString[0].split('-')
+    qLabel = str(qListAttrib[0])
+    qRange = int(qListAttrib[1])
+    qLoopCount = int(qListAttrib[2])
+    qAttribCount = int(qListAttrib[3])
+    maxDiffType = str(qListAttrib[4])
+    make_question(self, edit, qLabel, qRange, qAttribCount, qLoopCount, maxDiffType)
+    
